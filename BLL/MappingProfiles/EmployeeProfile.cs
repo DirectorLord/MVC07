@@ -8,7 +8,8 @@ internal class EmployeeProfile : Profile
         CreateMap<EmployeeUpdateRequest, Employee>();
 
         CreateMap<Employee, EmployeeDetailedResponse>();
-        CreateMap<Employee, EmployeeResponse>();
+        CreateMap<Employee, EmployeeResponse>().ForMember(d => d.Department, o => o.MapFrom(
+            s => s.Department.Name));
 
         CreateMap<EmployeeUpdateRequest, EmployeeRequest>();
     }

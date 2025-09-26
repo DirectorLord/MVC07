@@ -1,4 +1,6 @@
-﻿namespace BLL.DataTransferObject.Employee;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BLL.DataTransferObject.Employee;
 
 public class EmployeeResponse
 {
@@ -9,5 +11,7 @@ public class EmployeeResponse
     public bool IsActive { get; set; }
     public string? Email { get; set; }
     public string Gender { get; set; }
+    [Display(Name = "Employee Type")]
     public string EmployeeType { get; set; }
+    public string? Department { get; set; }
 }

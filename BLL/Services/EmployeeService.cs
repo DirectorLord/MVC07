@@ -5,7 +5,7 @@ global using DAL.Entities;
 
 namespace BLL.Services;
 
-public class EmployeeService(IEmployeeRepository repository, IMapper mapper) : IEmployeeService
+public class EmployeeService(IEmployeeRepository repository, IMapper mapper, EmployeeRepository employeeRepository) : IEmployeeService
 {
     
     public int Add(EmployeeRequest request)
@@ -21,22 +21,41 @@ public class EmployeeService(IEmployeeRepository repository, IMapper mapper) : I
         return result > 0;
     }
     public IEnumerable<EmployeeResponse> GetAll() {
-        var employee = repository.GetAllQuery().Select(
-                e => new EmployeeResponse
-                {
-                    Age = e.Age,
-                    Email = e.Email,
-                    Name = e.Name,
-                }
-            ).ToList();
-        return employee;
-        //return mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeResponse>>(employee);
-    }
+        //var employee = repository.GetAllQuery().Select(
+        //        e => new EmployeeResponse
+        //        {
+        //            Age = e.Age,
+        //            Email = e.Email,
+        //            Name = e.Name,
+        //            Department = e.Department.Name,
+        //        }
+        //    ).ToList();
+        //return employee;
+        var employees = employeeRepository.GetAll();
+        return mapper.Map<IEnumerable<EmployeeResponse>>(employees);
+    }   
+
 
     public EmployeeDetailedResponse? GetById(int id)
     {
-        var Employee = repository.GetById(id);
-        return Employee?.ToString();
+        var employee = repository.GetById(id);
+        if (employee == null) return null;
+
+        return new EmployeeDetailedResponse
+        {
+            Id = employee.Id,
+            Name = employee.Name,
+            Email = employee.Email,
+            Age = employee.Age,
+            Address = employee.Address,
+            Salary = employee.Salary,
+            IsActive = employee.IsActive,
+            PhoneNumber = employee.PhoneNumber,
+            HiringDate = employee.HiringDate,
+            Gender = employee.Gender,
+            EmployeeType = employee.EmployeeType,
+            Department = employee.Department?.Name
+        };
     }
 
     public int Update(EmployeeUpdateRequest employee) => repository.Update(Employee.ToEntity());

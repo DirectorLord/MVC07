@@ -28,7 +28,7 @@ public class BaseRepository<TEntity>(CompanyDBContext dbContext) : IRepository<T
        return trackChanges ? _dbSet
             .Where(x => !x.isDeleted).ToList(): _dbSet.AsNoTracking().Where(x => !x.isDeleted).ToList();
     }
-    public TEntity GetById(int id)
+    public virtual TEntity GetById(int id)
     {
         return _dbSet.Find(id);
     }

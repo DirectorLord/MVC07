@@ -23,6 +23,11 @@ public class EmployeeRepository(CompanyDBContext dbConext)
 
     public IQueryable<Employee> GetAllQuery()
     {
-        return _dbSet.Where( e => !e.isDeleted);
+        return _dbSet.Where(e => !e.isDeleted);
+    }
+
+    public override Employee GetById(int id)
+    {
+        return _dbSet.Include(e => e.Department).FirstOrDefault(e => e.Id == id)!;
     }
 }

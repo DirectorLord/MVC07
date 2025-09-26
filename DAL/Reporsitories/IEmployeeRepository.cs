@@ -8,4 +8,5 @@ public interface IEmployeeRepository : IRepository<Employee>
     IEnumerable<Employee> GetAll(string name);
     IQueryable<Employee> GetAll();
     IEnumerable<Employee> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector);
+    Employee GetById(int id);
 }
