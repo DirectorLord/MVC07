@@ -13,8 +13,14 @@ public class EmployeeRepository(CompanyDBContext dbConext)
     }
     public IEnumerable<Employee> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector)
     {
-       return _dbSet.Where(e =>!e.isDeleted).Select(resultSelector).ToList();
+        return (IEnumerable<Employee>)_dbSet.Where(e => !e.isDeleted).Select(resultSelector).ToList();
     }
+
+    public IQueryable<Employee> GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
     public IQueryable<Employee> GetAllQuery()
     {
         return _dbSet.Where( e => !e.isDeleted);

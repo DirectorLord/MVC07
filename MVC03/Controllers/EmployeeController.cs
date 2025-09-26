@@ -1,10 +1,11 @@
 ﻿using BLL.DataTransferObject.Employee;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace MVC04.Controllers;
 
 public class EmployeeController(IEmployeeService EmployeeService,
-    ILogger<EmployeeController> logger, IWebHostEnvironment env) : Controller
+    ILogger<EmployeeController> logger, IWebHostEnvironment env, IDepartmentService departmentService) : Controller
 {
     [HttpGet]
     public IActionResult Index()
@@ -17,6 +18,9 @@ public class EmployeeController(IEmployeeService EmployeeService,
     [HttpGet]
     public IActionResult Create()
     {
+        var department = departmentService.GetAll();
+        var selectList = new SelectList(department,"Id", "Name" );
+        ViewBag.SelectList = selectList;
         return View();
     }
     [HttpPost]
@@ -25,6 +29,7 @@ public class EmployeeController(IEmployeeService EmployeeService,
         //server side validation
         if (!ModelState.IsValid)
         {
+            
             return View(request);
         }
         try

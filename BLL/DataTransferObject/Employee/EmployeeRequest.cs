@@ -1,4 +1,5 @@
 ﻿using DAL.Entities.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace BLL.DataTransferObject.Employee;
 
@@ -14,5 +15,6 @@ public class EmployeeRequest
     public DateTime HiringDate { get; set; }
     public Gender Gender{ get; set; }
     public EmployeeType EmployeeType { get; set; }
-
+    [Display(Name = "Department")]
+    public int? DepartmentId { get; set; }
 }
