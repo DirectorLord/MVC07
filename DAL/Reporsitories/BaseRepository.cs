@@ -8,20 +8,17 @@ public class BaseRepository<TEntity>(CompanyDBContext dbContext) : IRepository<T
 {
     protected DbSet<TEntity> _dbSet = dbContext.Set<TEntity>();
 
-    public int Add(TEntity TEntity)
+    public virtual void Add(TEntity TEntity)
     {
         _dbSet.Add(TEntity);
-        return dbContext.SaveChanges();
     }
-    public int Update(TEntity TEntity)
+    public virtual void Update(TEntity TEntity)
     {
         _dbSet.Update(TEntity);
-        return dbContext.SaveChanges();
     }
-    public int Delete(TEntity TEntity)
+    public virtual void Delete(TEntity TEntity)
     {
         _dbSet.Remove(TEntity);
-        return dbContext.SaveChanges();
     }
     public IEnumerable<TEntity> GetAllQuery(bool trackChanges = false)
     {

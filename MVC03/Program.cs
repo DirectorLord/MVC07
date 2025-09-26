@@ -13,7 +13,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
-
+        builder.Services.AddScoped<IUnitOfwork, UnitOfWork>();
         builder.Services.AddScoped<IDepartmentService, DepartmentService>();
         //builder.Services.AddScoped<IDepartmentRepository, DeparmentRepository>();
         builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();

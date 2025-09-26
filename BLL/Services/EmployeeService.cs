@@ -6,23 +6,24 @@ using AutoMapper.QueryableExtensions;
 
 namespace BLL.Services;
 
-public class EmployeeService(IEmployeeRepository repository, IMapper mapper, EmployeeRepository employeeRepository) : IEmployeeService
+public class EmployeeService(IUnitOfwork unitOfwork, IMapper mapper) : IEmployeeService
 {
     
     public int Add(EmployeeRequest request)
     {
        var employee = mapper.Map<EmployeeRequest, Employee>(request);
-        return repository.Add(employee);
+        unitOfwork.Employees.Add(employee);
+        return unitOfwork.saveChanges();
     }
 
     public bool Delete(int id) {
-        var Employee = repository.GetById(id);
+        var Employee = unitOfwork.Employees.GetById(id);
         if (Employee is null) return false;
-        var result = repository.Delete(Employee);
-        return result > 0;
+            unitOfwork.Employees.Delete(Employee);
+        return unitOfwork.saveChanges() > 0;
     }
     public IEnumerable<EmployeeResponse> GetAll() {
-        //var employee = repository.GetAllQuery().Select(
+        //var employee = unitOfWork.GetAllQuery().Select(
         //        e => new EmployeeResponse
         //        {
         //            Age = e.Age,
@@ -32,15 +33,13 @@ public class EmployeeService(IEmployeeRepository repository, IMapper mapper, Emp
         //        }
         //    ).ToList();
         //return employee;
-        return employeeRepository.GetAllQuery().ProjectTo<EmployeeResponse>(
+        return unitOfwork.Employees.GetAllQuery().ProjectTo<EmployeeResponse>(
             mapper.ConfigurationProvider).ToList();
     }   
     public IEnumerable<EmployeeResponse> GetAll(string searchValue)
     {
-        if (string.IsNullOrEmpty(searchValue))
-            return Enumerable.Empty<EmployeeResponse>();
 
-        return employeeRepository.GetAllQuery()
+        return unitOfwork.GetAllQuery()
             .Where(e => e.Name != null && e.Name.Contains(searchValue.Trim()) ||
                         e.Email != null && e.Email.Contains(searchValue.Trim())) 
             .ProjectTo<EmployeeResponse>(mapper.ConfigurationProvider)
@@ -49,7 +48,7 @@ public class EmployeeService(IEmployeeRepository repository, IMapper mapper, Emp
 
     public EmployeeDetailedResponse? GetById(int id)
     {
-        var employee = repository.GetById(id);
+        var employee = unitOfwork.Employees.GetById(id);
         if (employee == null) return null;
 
         return new EmployeeDetailedResponse
@@ -69,7 +68,7 @@ public class EmployeeService(IEmployeeRepository repository, IMapper mapper, Emp
         };
     }
 
-    public int Update(EmployeeUpdateRequest employee) => repository.Update(Employee.ToEntity());
+    public int Update(EmployeeUpdateRequest employee) => unitOfWork.Update(Employee.ToEntity());
 
     
 }

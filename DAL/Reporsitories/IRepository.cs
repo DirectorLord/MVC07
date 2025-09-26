@@ -6,7 +6,7 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
 {
     IEnumerable<TEntity> GetAllQuery(bool trackChanges = false);
     TEntity GetById(int id);
-    int Add(TEntity entity);
-    int Update(TEntity entity);
-    int Delete(TEntity entity);
+    void Add(TEntity entity);
+    void Update(TEntity entity);
+    void Delete(TEntity entity);
 }

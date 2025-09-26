@@ -4,16 +4,17 @@ using DAL.Reporsitories;
 
 namespace BLL.Services;
 
-public class DepartmentService(IDepartmentRepository repository) : IDepartmentService
+public class DepartmentService(IUnitOfwork unitOfWork) : IDepartmentService
 {
     public int Create(DepartmentRequest request)
     {
-        return repository.Add(request.ToEntity());
+            unitOfWork.Departments.Add(request.ToEntity());
+        return unitOfWork.saveChanges(); 
     }
 
     public DepartmentDetailResponse? GetById(int id)
     {
-        var department = repository.GetById(id);
+        var department = unitOfWork.Departments.GetById(id);
         if (department == null) return null;
 
         return new DepartmentDetailResponse
@@ -28,7 +29,7 @@ public class DepartmentService(IDepartmentRepository repository) : IDepartmentSe
 
     public IEnumerable<DepartmentDetailResponse> GetAll()
     {
-        var departments = repository.GetAllQuery();
+        var departments = unitOfWork.Departments.GetAllQuery();
         return departments.Select(department => new DepartmentDetailResponse
         {
             Id = department.Id,
@@ -41,28 +42,30 @@ public class DepartmentService(IDepartmentRepository repository) : IDepartmentSe
 
     public int Update(DepartmentUpdateRequest request)
     {
-        var department = repository.GetById(request.Id);
+        var department = unitOfWork.Departments.GetById(request.Id);
         if (department == null) return 0;
 
         department.Name = request.Name;
         department.Code = request.Code;
         department.Description = request.Description;
 
-        return repository.Update(department);
+            unitOfWork.Departments.Update(department);
+        return unitOfWork.saveChanges(); 
     }
 
     public bool Delete(int id)
     {
-        var department = repository.GetById(id);
+        var department = unitOfWork.Departments.GetById(id);
         if (department == null) return false;
 
-        repository.Delete(department);
+        unitOfWork.Departments.Delete(department);
         return true;
     }
 
     public int Add(DepartmentRequest request)
     {
-        return repository.Add(request.ToEntity());
+            unitOfWork.Departments.Add(request.ToEntity());
+        return unitOfWork.saveChanges(); 
     }
 
     int IDepartmentService.Delete(int id)
