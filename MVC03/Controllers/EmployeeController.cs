@@ -11,10 +11,14 @@ public class EmployeeController(IEmployeeService EmployeeService,
      IMapper mapper) : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(string? searchValue)
     {
-        var Employees = EmployeeService.GetAll();
-        return View(Employees);
+        if(string.IsNullOrWhiteSpace(searchValue))
+            return View(EmployeeService.GetAll());
+        else
+        {
+            return View(EmployeeService.GetAll(searchValue);
+        }
     }
 
     #region Create

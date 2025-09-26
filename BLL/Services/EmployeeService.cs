@@ -2,6 +2,7 @@
 global using BLL.DataTransferObject.Employee;
 global using DAL.Reporsitories;
 global using DAL.Entities;
+using AutoMapper.QueryableExtensions;
 
 namespace BLL.Services;
 
@@ -31,10 +32,20 @@ public class EmployeeService(IEmployeeRepository repository, IMapper mapper, Emp
         //        }
         //    ).ToList();
         //return employee;
-        var employees = employeeRepository.GetAll();
-        return mapper.Map<IEnumerable<EmployeeResponse>>(employees);
+        return employeeRepository.GetAllQuery().ProjectTo<EmployeeResponse>(
+            mapper.ConfigurationProvider).ToList();
     }   
+    public IEnumerable<EmployeeResponse> GetAll(string searchValue)
+    {
+        if (string.IsNullOrEmpty(searchValue))
+            return Enumerable.Empty<EmployeeResponse>();
 
+        return employeeRepository.GetAllQuery()
+            .Where(e => e.Name != null && e.Name.Contains(searchValue.Trim()) ||
+                        e.Email != null && e.Email.Contains(searchValue.Trim())) 
+            .ProjectTo<EmployeeResponse>(mapper.ConfigurationProvider)
+            .ToList();
+    }
 
     public EmployeeDetailedResponse? GetById(int id)
     {

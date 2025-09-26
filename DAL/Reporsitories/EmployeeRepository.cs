@@ -11,9 +11,14 @@ public class EmployeeRepository(CompanyDBContext dbConext)
     {
        return _dbSet.Where(e => e.Name == name).ToList();
     }
-    public IEnumerable<Employee> GetAll<TResult>(Expression<Func<Employee, TResult>> resultSelector)
+    public IEnumerable<Employee> GetAll<TResult>
+        (Expression<Func<Employee, TResult>> resultSelector, Expression<Func<Employee, bool>>?
+        predicate = null)
     {
-        return (IEnumerable<Employee>)_dbSet.Where(e => !e.isDeleted).Select(resultSelector).ToList();
+        if(predicate is null)
+            return (IEnumerable<Employee>)_dbSet.Where(x => !x.isDeleted).Select(resultSelector).ToList();
+        return (IEnumerable<Employee>)_dbSet.Where(x => !x.isDeleted).Where(predicate)
+            .Select(resultSelector).ToList();
     }
 
     public IQueryable<Employee> GetAll()
