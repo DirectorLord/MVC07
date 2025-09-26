@@ -1,11 +1,14 @@
-﻿using BLL.DataTransferObject.Employee;
+﻿using AutoMapper;
+using BLL.DataTransferObject.Employee;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace MVC04.Controllers;
 
 public class EmployeeController(IEmployeeService EmployeeService,
-    ILogger<EmployeeController> logger, IWebHostEnvironment env, IDepartmentService departmentService) : Controller
+    ILogger<EmployeeController> logger, 
+    IWebHostEnvironment env, IDepartmentService departmentService,
+     IMapper mapper) : Controller
 {
     [HttpGet]
     public IActionResult Index()
@@ -89,7 +92,10 @@ public class EmployeeController(IEmployeeService EmployeeService,
         var employee = EmployeeService.GetById(id.Value); // Changed variable name to lowercase
         //if null
         if (employee == null) return NotFound();
-        return View(employee); // Updated to use the correct variable name
+        var departments = departmentService.GetAll();
+        var selectList = new SelectList(departments, "Id", "Name",employee.DepartmentId);
+        ViewBag.SelectList = selectList;
+        return View(mapper.Map<EmployeeUpdateRequest>(employee); // Updated to use the correct variable name
     }
     [HttpPost]
     public IActionResult Edit([FromRoute] int? id, EmployeeUpdateRequest request)
